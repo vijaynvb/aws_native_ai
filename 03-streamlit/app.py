@@ -139,13 +139,19 @@ with tab2:
     
     user_input = st.text_input("Enter text to analyze sentiment", key="sentiment_input")
 
+    import boto3
+
+    comprehend = boto3.client('comprehend', region_name='us-east-1')
+
+    
+
     if st.button("Analyze Sentiment", key="analyze_sentiment_button"):
         if user_input.strip() == "":
             st.warning("Please enter some text to analyze.")
         else:
             # Placeholder for sentiment analysis logic
-            sentiment_result = "Positive"  # Replace with actual sentiment analysis result
-            st.success(f"Sentiment Analysis Result: **{sentiment_result}**")
+            response = comprehend.detect_sentiment(Text=user_input, LanguageCode='en')
+            st.success(f"Sentiment Analysis Result: **{response['Sentiment']}**")
 
 with tab3:
     st.markdown("### Extract PII Data from text")

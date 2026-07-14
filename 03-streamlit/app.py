@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 
 # Page configuration
 st.set_page_config(
-    page_title="Marketing Campaigns",
+    page_title="Ness, AI Services",
     page_icon="📊",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -119,187 +119,54 @@ df_campaigns = pd.DataFrame(campaigns_data)
 with st.container():
     st.markdown("""
     <div class="header-container">
-        <div class="header-title">📊 Marketing Campaigns</div>
+        <div class="header-title">📊 Ness, AI Services</div>
         <p style="font-size: 16px; margin: 0;">Manage and track all your marketing campaigns in one place</p>
     </div>
     """, unsafe_allow_html=True)
 
 # Tabs
-tab1, tab2, tab3 = st.tabs(["📋 Main Table", "📊 Gantt Chart", "🎯 Dashboard"])
+tab1, tab2, tab3, tab4 = st.tabs(["🎯 Dashboard", "📋 Analyze Sentiment", "📊 PII Data Extraction", "Transcribe Audio File"])
 
 with tab1:
-    # Filters
-    col1, col2, col3, col4 = st.columns(4)
-    
-    with col1:
-        status_filter = st.multiselect(
-            "Filter by Status",
-            options=df_campaigns["Status"].unique(),
-            default=df_campaigns["Status"].unique()
-        )
-    
-    with col2:
-        channel_filter = st.multiselect(
-            "Filter by Channel",
-            options=df_campaigns["Channel"].unique(),
-            default=df_campaigns["Channel"].unique()
-        )
-    
-    with col3:
-        sort_by = st.selectbox("Sort by", ["Campaign", "Date", "Status"])
-    
-    with col4:
-        st.write("")
-        st.write("")
-        if st.button("🔄 Refresh", use_container_width=True):
-            st.rerun()
-    
-    # Filter data
-    filtered_df = df_campaigns[
-        (df_campaigns["Status"].isin(status_filter)) &
-        (df_campaigns["Channel"].isin(channel_filter))
-    ]
-    
-    # Sort data
-    if sort_by == "Date":
-        filtered_df = filtered_df.sort_values("Date")
-    elif sort_by == "Status":
-        filtered_df = filtered_df.sort_values("Status")
-    else:
-        filtered_df = filtered_df.sort_values("Campaign")
-    
+
     # Display table with custom styling
-    st.markdown("### Active Campaigns")
+    st.markdown("### Quick links for the services")
     
-    # Create custom table display
-    for idx, row in filtered_df.iterrows():
-        col1, col2, col3, col4, col5 = st.columns([2, 1, 2, 2, 1.5])
-        
-        with col1:
-            st.markdown(f"**{row['Campaign']}**")
-        
-        with col2:
-            # Status badge
-            status = row["Status"]
-            if "progress" in status.lower():
-                badge_class = "status-in-progress"
-            elif "confirmed" in status.lower():
-                badge_class = "status-confirmed"
-            else:
-                badge_class = "status-in-progress"
-            st.markdown(f'<span class="status-badge {badge_class}">{status}</span>', unsafe_allow_html=True)
-        
-        with col3:
-            st.markdown(f"🎯 {row['Campaign Type']}")
-        
-        with col4:
-            st.markdown(f"📱 {row['Channel']}")
-        
-        with col5:
-            st.markdown(f"📅 {row['Date']}")
-        
-        st.divider()
+
 
 with tab2:
-    st.markdown("### Gantt Chart Timeline")
+    st.markdown("### Analyze Sentiment given text")
     
-    # Create sample gantt-like visualization
-    gantt_data = []
-    start_date = datetime.now()
-    
-    for idx, row in df_campaigns.iterrows():
-        duration = np.random.randint(10, 30)
-        gantt_data.append({
-            "Campaign": row["Campaign"],
-            "Start": start_date + timedelta(days=np.random.randint(0, 30)),
-            "Duration": duration
-        })
-    
-    # Display as a simple timeline
-    for item in gantt_data:
-        progress_percent = np.random.randint(20, 100)
-        st.write(f"{item['Campaign']}")
-        st.progress(progress_percent / 100)
+    user_input = st.text_input("Enter text to analyze sentiment", key="sentiment_input")
+
+    if st.button("Analyze Sentiment", key="analyze_sentiment_button"):
+        if user_input.strip() == "":
+            st.warning("Please enter some text to analyze.")
+        else:
+            # Placeholder for sentiment analysis logic
+            sentiment_result = "Positive"  # Replace with actual sentiment analysis result
+            st.success(f"Sentiment Analysis Result: **{sentiment_result}**")
 
 with tab3:
-    st.markdown("### Campaign Dashboard")
+    st.markdown("### Extract PII Data from text")
     
-    # Metrics
-    col1, col2, col3, col4 = st.columns(4)
-    
-    with col1:
-        st.metric("Total Campaigns", len(df_campaigns))
-    
-    with col2:
-        in_progress = len(df_campaigns[df_campaigns["Status"].str.contains("progress", case=False)])
-        st.metric("In Progress", in_progress)
-    
-    with col3:
-        confirmed = len(df_campaigns[df_campaigns["Status"].str.contains("Confirmed", case=False)])
-        st.metric("Confirmed", confirmed)
-    
-    with col4:
-        planning = len(df_campaigns[df_campaigns["Status"].str.contains("Planning|Draft", case=False)])
-        st.metric("Planning", planning)
-    
-    st.divider()
-    
-    # Status breakdown
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        st.markdown("### Status Distribution")
-        status_counts = df_campaigns["Status"].value_counts()
-        st.bar_chart(status_counts)
-    
-    with col2:
-        st.markdown("### Channel Distribution")
-        channel_counts = df_campaigns["Channel"].value_counts()
-        st.bar_chart(channel_counts)
-    
-    st.divider()
-    
-    # Profile section
-    st.markdown("""
-    <div class="profile-section">
-        <h3>✨ AI Brief Creator</h3>
-        <p style="font-size: 18px; margin: 10px 0;">Rose, Brief Creator</p>
-        <p style="font-size: 14px;">Generated 7 briefs</p>
-    </div>
-    """, unsafe_allow_html=True)
+    pii_input = st.text_area("Enter text to extract PII data", key="pii_input")
+
+    if st.button("Extract PII Data", key="extract_pii_button"):
+        if pii_input.strip() == "":
+            st.warning("Please enter some text to extract PII data.")
+        else:
+            # Placeholder for PII extraction logic
+            pii_result = {
+                "Names": ["John Doe"],
+                "Emails": ["john.doe@example.com"]
+            }
+            st.success("PII Data Extraction Result:")
+            for category, items in pii_result.items():
+                st.write(f"**{category}:** {', '.join(items)}")
 
 # Sidebar
 with st.sidebar:
     st.markdown("### 🎛️ Controls")
     
-    with st.expander("Add New Campaign"):
-        campaign_name = st.text_input("Campaign Name")
-        campaign_type = st.selectbox("Campaign Type", ["Video production", "Brand awareness", "Social media", "Partnership", "Retargeting"])
-        channel = st.multiselect("Channels", ["YouTube", "LinkedIn", "Instagram", "Podcast", "Email"])
-        status = st.selectbox("Status", ["Planning", "In progress", "Confirmed", "Completed"])
-        date = st.date_input("Target Date")
-        
-        if st.button("Create Campaign", use_container_width=True):
-            st.success("✅ Campaign created successfully!")
     
-    st.divider()
-    
-    with st.expander("Team Members"):
-        st.markdown("""
-        - 👤 Rose (Brief Creator)
-        - 👤 Alex (Creative Lead)
-        - 👤 Jordan (Campaign Manager)
-        - 👤 Sam (Analyst)
-        """)
-    
-    st.divider()
-    
-    with st.expander("About"):
-        st.markdown("""
-        **Marketing Campaign Manager**
-        
-        A comprehensive tool to manage marketing campaigns with real-time tracking, 
-        team collaboration, and AI-powered brief generation.
-        
-        Built with Streamlit & AWS Services
-        """)
